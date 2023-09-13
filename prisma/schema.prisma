@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider    = "postgresql"
+  url         = env("DATABASE_URL")
+  directUrl   = env("DIRECT_URL")
+}
+
+model User {
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  name          String?
+  password      String
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  applications  Application[]
+}
+
+model Company {
+  id            Int      @id @default(autoincrement())
+  name          String
+  website       String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  applications  Application[]
+  contacts      Contact[]
+}
+
+model Application {
+  id            Int      @id @default(autoincrement())
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  status        ApplicationStatus  
+  notes         String?   
+  jobTitle      String?
+  company       Company  @relation(fields: [companyId], references: [id])
+  companyId     Int
+  user          User     @relation(fields: [userId], references: [id])
+  userId        Int
+  interviews    Interview[]
+}
+
+// Define an enum for application status
+enum ApplicationStatus {
+  SUBMITTED
+  UNDER_REVIEW
+  INTERVIEW_SCHEDULED
+  OFFER_RECEIVED
+  REJECTED
+}
+
+model Contact {
+  id            Int      @id @default(autoincrement())
+  name          String
+  email         String
+  phone         String?
+  company       Company @relation(fields: [companyId], references: [id])
+  companyId     Int
+}
+
+model Interview {
+  id              Int      @id @default(autoincrement())
+  datetime        DateTime
+  location        String?
+  notes           String?
+  application     Application @relation(fields: [applicationId], references: [id])
+  applicationId   Int
+}
