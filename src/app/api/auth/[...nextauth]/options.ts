@@ -44,10 +44,10 @@ export const options: NextAuthOptions = {
   ],
   callbacks: {
     async redirect({ url, baseUrl }) {
-      if (url.startsWith("/")) return `${baseUrl}`;
-      else if (new URL(url).origin === baseUrl) return url;
+      console.log(url, "URL");
+      console.log(baseUrl, "BASEURL");
 
-      return baseUrl;
+      return `${baseUrl}/jobs`;
     },
     async signIn({ user, account, profile, email, credentials }) {
       return true;
