@@ -1,6 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "../../../lib/prisma";
+import { compare } from "bcrypt";
 
 export const options: NextAuthOptions = {
   session: {
@@ -18,9 +19,7 @@ export const options: NextAuthOptions = {
         },
       },
       async authorize(credentials, profile) {
-        console.log(credentials, "CREDENTIALS");
-
-        console.log(profile, "PROFILE");
+        if (!credentials?.email || !credentials?.password) return null;
 
         const user = await prisma.user.findUnique({
           where: {
@@ -28,17 +27,24 @@ export const options: NextAuthOptions = {
           },
         });
 
+        if (!user) return null;
+
         console.log(user, "USER2");
 
-        if (!user) return null;
-        if (
-          credentials?.email === user.email &&
-          credentials?.password === user.password
-        ) {
-          return user;
-        } else {
-          return null;
-        }
+        const isPasswordValid = await compare(
+          credentials.password,
+          user.password
+        );
+
+        if (!isPasswordValid) return null;
+
+        const userData = {
+          id: String(user.id), // Cast user.id to a string
+          email: user.email,
+          name: user.email,
+        };
+
+        return userData;
       },
     }),
   ],
@@ -51,6 +57,25 @@ export const options: NextAuthOptions = {
     },
     async signIn({ user, account, profile, email, credentials }) {
       return true;
+    },
+    session: ({ session, token }) => {
+      return {
+        ...session,
+        user: {
+          ...session.user,
+          id: token.id,
+        },
+      };
+    },
+    // user only passed in the first time they log in
+    jwt: ({ token, user }) => {
+      if (user) {
+        return {
+          ...token,
+          id: user.id,
+        };
+      }
+      return token;
     },
   },
 };
