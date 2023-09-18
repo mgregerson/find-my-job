@@ -2,6 +2,7 @@ import type { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { prisma } from "../../../lib/prisma";
 import { compare } from "bcrypt";
+import { User } from "@prisma/client";
 
 export const options: NextAuthOptions = {
   session: {
@@ -29,8 +30,6 @@ export const options: NextAuthOptions = {
 
         if (!user) return null;
 
-        console.log(user, "USER2");
-
         const isPasswordValid = await compare(
           credentials.password,
           user.password as string
@@ -38,42 +37,49 @@ export const options: NextAuthOptions = {
 
         if (!isPasswordValid) return null;
 
-        const userData = {
-          id: String(user.id), // Cast user.id to a string
+        return {
+          id: user.id,
           email: user.email,
           name: user.email,
         };
-
-        return userData;
       },
     }),
   ],
   secret: process.env.NEXTAUTH_SECRET,
   callbacks: {
     async redirect({ url, baseUrl }) {
-      console.log(url, "URL");
-      console.log(baseUrl, "BASEURL");
-
-      return `${baseUrl}/jobs`;
+      return `/`;
     },
     async signIn({ user, account, profile, email, credentials }) {
       return true;
     },
     session: ({ session, token }) => {
+      console.log("SESSION=", {
+        ...session,
+        user: {
+          ...session.user,
+          id: Number(token.id),
+        },
+      });
       return {
         ...session,
         user: {
           ...session.user,
-          id: token.id,
+          id: Number(token.id),
         },
       };
     },
     // user only passed in the first time they log in
     jwt: ({ token, user }) => {
       if (user) {
+        const u = user as unknown as any;
+        console.log("JWT RESPONSE=", {
+          ...token,
+          id: u.id,
+        });
         return {
           ...token,
-          id: user.id,
+          id: Number(u.id),
         };
       }
       return token;
