@@ -27,6 +27,7 @@ model Company {
   website       String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
+  logo          String?
   applications  Application[]
   contacts      Contact[]
 }
@@ -35,7 +36,7 @@ model Application {
   id            Int      @id @default(autoincrement())
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  status        ApplicationStatus  
+  status        String
   notes         String?   
   jobTitle      String?
   company       Company  @relation(fields: [companyId], references: [id])
@@ -45,14 +46,6 @@ model Application {
   interviews    Interview[]
 }
 
-// Define an enum for application status
-enum ApplicationStatus {
-  SUBMITTED
-  UNDER_REVIEW
-  INTERVIEW_SCHEDULED
-  OFFER_RECEIVED
-  REJECTED
-}
 
 model Contact {
   id            Int      @id @default(autoincrement())
