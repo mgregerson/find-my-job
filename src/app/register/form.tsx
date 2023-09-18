@@ -29,7 +29,7 @@ export const RegisterForm = () => {
         return;
       }
 
-      signIn(undefined, { callbackUrl: "/jobs" });
+      signIn(undefined, { callbackUrl: "/job-board" });
     } catch (error: any) {
       setLoading(false);
       console.error(error);
@@ -43,46 +43,55 @@ export const RegisterForm = () => {
   };
 
   return (
-    <form
-      onSubmit={onSubmit}
+    <div
       style={{
         display: "flex",
-        flexDirection: "column",
-        width: 500,
-        rowGap: 10,
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
-      <label htmlFor="email"></label>
-      <input
-        required
-        type="email"
-        placeholder="Email"
-        name="email"
-        value={formValues.email}
-        onChange={handleChange}
-        style={{ padding: "1rem", border: "1px solid #ccc" }}
-      />
-      <label htmlFor="password"></label>
-      <input
-        required
-        type="password"
-        name="password"
-        placeholder="Password"
-        value={formValues.password}
-        onChange={handleChange}
-        style={{ padding: "1rem", border: "1px solid #ccc" }}
-      />
-      <button
+      <form
+        onSubmit={onSubmit}
         style={{
-          backgroundColor: `${loading ? "#ccc" : "#3446eb"}`,
-          color: "#fff",
-          padding: "1rem",
-          cursor: "pointer",
+          display: "flex",
+          flexDirection: "column",
+          rowGap: 10,
+          width: "40%",
         }}
-        disabled={loading}
       >
-        {loading ? "loading..." : "Register"}
-      </button>
-    </form>
+        <label htmlFor="email"></label>
+        <input
+          required
+          type="email"
+          placeholder="Email"
+          name="email"
+          value={formValues.email}
+          onChange={handleChange}
+          style={{ padding: "1rem", border: "1px solid #ccc" }}
+        />
+        <label htmlFor="password"></label>
+        <input
+          required
+          type="password"
+          name="password"
+          placeholder="Password"
+          value={formValues.password}
+          onChange={handleChange}
+          style={{ padding: "1rem", border: "1px solid #ccc" }}
+        />
+        <button
+          style={{
+            backgroundColor: `${loading ? "#ccc" : "#3446eb"}`,
+            color: "#fff",
+            padding: "1rem",
+            cursor: "pointer",
+            borderRadius: "0.5rem",
+          }}
+          disabled={loading}
+        >
+          {loading ? "loading..." : "Register"}
+        </button>
+      </form>
+    </div>
   );
 };
