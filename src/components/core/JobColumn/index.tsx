@@ -18,9 +18,10 @@ const JobColumn = ({ title, icon, addJob, jobs }: JobColumnProps) => {
       <div className="mt-10 font-bold">{title}</div>
       <div className="text-gray-400">{jobs.length} Jobs</div>
       <AddJobButton symbol={"+"} />
-      {jobs.map((job) => {
+      {jobs.map((job, index) => {
         return (
           <JobCard
+            key={index}
             job={job.job}
             logo={"testlogo"}
             company={job.company}
