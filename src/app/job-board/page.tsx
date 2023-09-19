@@ -1,5 +1,5 @@
 import React from "react";
-import JobColumn from "../components/core/JobColumn";
+import JobColumn from "../../components/core/JobColumn";
 
 const Jobs = () => {
   const addJob = () => {

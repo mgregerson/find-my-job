@@ -2,8 +2,8 @@
 
 import React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getCompanies } from "../lib/utils";
-import AddJobButton from "../components/button/AddJobButton";
+import { getCompanies } from "../../lib/utils";
+import AddJobButton from "../../components/button/AddJobButton";
 
 const Profile = () => {
   const queryClient = useQueryClient();
