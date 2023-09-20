@@ -7,7 +7,7 @@ export const AddJobForm = () => {
   let [loading, setLoading] = useState(false);
   let [formValues, setFormValues] = useState({
     jobTitle: "",
-    companyId: "",
+    companyName: "",
     status: "",
     notes: "",
   });
@@ -18,7 +18,7 @@ export const AddJobForm = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/apply", {
+      const res = await fetch("/api/applications", {
         method: "POST",
         body: JSON.stringify(formValues),
         headers: {
@@ -39,7 +39,9 @@ export const AddJobForm = () => {
     }
   };
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, value } = event.target;
     setFormValues({ ...formValues, [name]: value });
   };
@@ -75,12 +77,26 @@ export const AddJobForm = () => {
         <input
           required
           type="text"
-          name="companyId"
-          placeholder="Company ID"
-          value={formValues.companyId}
+          name="companyName"
+          placeholder="Company Name"
+          value={formValues.companyName}
           onChange={handleChange}
           style={{ padding: "1rem", border: "1px solid #ccc" }}
         />
+        <select
+          required
+          name="status"
+          value={formValues.status}
+          onChange={(e) => handleChange(e)}
+          style={{ padding: "1rem", border: "1px solid #ccc" }}
+        >
+          <option value="">Select Status</option>
+          <option value="Wishlist">Wishlist</option>
+          <option value="Applied">Applied</option>
+          <option value="Interview">Interview</option>
+          <option value="Rejected">Rejected</option>
+          <option value="Offer">Offer</option>
+        </select>
         <input
           required
           type="textarea"
@@ -100,7 +116,7 @@ export const AddJobForm = () => {
           }}
           disabled={loading}
         >
-          {loading ? "loading..." : "Register"}
+          {loading ? "loading..." : "You Got This!"}
         </button>
       </form>
     </div>
