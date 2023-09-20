@@ -18,34 +18,53 @@ export async function POST(req: Request) {
     console.log(userId, "THE USER ID");
 
     // Comment out the existing code and Prisma operation
-    const { notes, jobTitle, companyId } = await req.json();
+    const { notes, jobTitle, companyName, status } = await req.json();
 
     console.log(
       "notes=",
       notes,
       "jobTitle=",
       jobTitle,
-      "companyId=",
-      companyId
+      "company name=",
+      companyName
     );
 
-    // const companies = await prisma.company.findMany();
+    // Check if the company already exists
 
-    // return NextResponse.json(companies);
+    const company = await prisma.company.findUnique({
+      where: {
+        name: companyName,
+      },
+    });
 
+    let companyId: number;
+
+    if (company) {
+      // If the company exists, use its id
+      companyId = company.id;
+    } else {
+      // If the company doesn't exist, create it and get its id
+      const newCompany = await prisma.company.create({
+        data: {
+          name: companyName,
+          // You can add other company data here
+        },
+      });
+
+      companyId = newCompany.id;
+    }
+
+    // Create the application using the companyId
     const application = await prisma.application.create({
       data: {
-        status: "Applied",
+        status: status || "Applied",
         notes,
         jobTitle,
-        companyId: Number(companyId),
+        companyId,
         userId,
       },
     });
 
-    // console.log(application, "THE APPLICATION");
-
-    // Send a simple response
     return NextResponse.json(application, {
       status: 200,
     });
