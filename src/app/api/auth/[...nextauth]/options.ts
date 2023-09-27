@@ -38,7 +38,7 @@ export const options: NextAuthOptions = {
         if (!isPasswordValid) return null;
 
         return {
-          id: user.id,
+          id: user.id.toString(),
           email: user.email,
           name: user.email,
         };
