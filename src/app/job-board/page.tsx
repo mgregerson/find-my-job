@@ -26,13 +26,24 @@ type Applications = {
 };
 
 function formatDate(dateString: string) {
-  const date = new Date(dateString);
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
-  const year = date.getFullYear().toString();
-  return `${month}/${day}/${year}`;
-}
+  const inputDate = new Date(dateString);
+  const currentDate = new Date();
 
+  const timeDifference = (currentDate as any) - (inputDate as any);
+
+  if (timeDifference < 0) {
+    return "Invalid date"; // Handle invalid input dates
+  }
+
+  const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+  const monthsDifference = Math.floor(daysDifference / 30);
+
+  if (monthsDifference < 1) {
+    return `${daysDifference} days`;
+  } else {
+    return `${monthsDifference} mo`;
+  }
+}
 async function getApplications(id: number) {
   try {
     const applications = await getApplicationsByUser(id);
@@ -69,9 +80,7 @@ function JobBoard() {
           console.error("Error in getApplications:", error);
         });
     }
-  }, []);
-
-  console.log(applications, "THE APPLICATIONS ARE HERE");
+  }, [loading, session?.user?.id]);
 
   return (
     <div style={{ width: "100%", overflowX: "scroll" }}>
@@ -88,6 +97,7 @@ function JobBoard() {
                   job: app.jobTitle,
                   company: app.company.name,
                   applyDate: formatDate(app.createdAt),
+                  applicationId: app.id,
                 }))}
               />
             </div>
