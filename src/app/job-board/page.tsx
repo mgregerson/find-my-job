@@ -25,6 +25,15 @@ type Applications = {
   company: any;
 };
 
+type SessionType = {
+  user?: {
+    id?: number | string;
+    email?: string;
+    name: string;
+  };
+  expires: string;
+};
+
 function formatDate(dateString: string) {
   const inputDate = new Date(dateString);
   const currentDate = new Date();
@@ -70,15 +79,19 @@ function JobBoard() {
 
   useEffect(() => {
     if (loading) {
-      getApplications(session?.user?.id)
-        .then((result) => {
-          setApplications(result);
-          setLoading(false);
-        })
-        .catch((error) => {
-          // Handle errors if needed
-          console.error("Error in getApplications:", error);
-        });
+      // Use type assertion to tell TypeScript that session.user may have an id property
+      const userId = Number(session?.user?.id);
+      if (userId !== undefined) {
+        getApplications(userId)
+          .then((result) => {
+            setApplications(result);
+            setLoading(false);
+          })
+          .catch((error) => {
+            // Handle errors if needed
+            console.error("Error in getApplications:", error);
+          });
+      }
     }
   }, [loading, session?.user?.id]);
 
